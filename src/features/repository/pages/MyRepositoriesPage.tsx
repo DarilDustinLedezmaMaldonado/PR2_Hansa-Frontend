@@ -19,7 +19,7 @@ const MyRepositoriesPage: React.FC = () => {
   const fetchRepositorios = async () => {
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:5000/api/repositorios/mis-repositorios", {
+      const res = await fetch("api/repositorios/mis-repositorios", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
