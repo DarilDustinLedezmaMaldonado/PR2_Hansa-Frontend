@@ -1,6 +1,7 @@
 import { JSX, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import api from "../utils/api";
 import {
   FiArrowLeft,
   FiEdit,
@@ -21,9 +22,8 @@ const VistaPerfil = () => {
     const userId = user.id; // o usa contexto o props
 
     if (userId) {
-      fetch(`http://localhost:5000/api/users/${userId}`)
-        .then((res) => res.json())
-        .then((data) => {
+      const res = await api.get(`/api/users/${userId}`);
+      const data = res.data;
           setPerfil({
             nombre: data.nombre || "",
             apellido: data.apellido || "",
@@ -35,9 +35,6 @@ const VistaPerfil = () => {
             hobbies: data.hobbies || [],
             profileImage: data.profileImage || "",
           });
-        })
-        .catch((err) => {
-          console.error("Error al cargar perfil:", err);
         });
     }
   }, []);

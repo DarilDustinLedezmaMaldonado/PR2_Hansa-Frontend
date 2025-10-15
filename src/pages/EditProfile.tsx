@@ -1,5 +1,6 @@
 import { FiX, FiSave } from "react-icons/fi";
 import { useState } from "react";
+import api from "../utils/api";
 
 interface EditarPerfilModalProps {
     onClose: () => void;
@@ -60,17 +61,9 @@ const EditarPerfilModal: React.FC<EditarPerfilModalProps> = ({
         try {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             const userId = user.id; // o usa contexto o props
-            const res = await fetch(`http://localhost:5000/api/users/${userId}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            });
+            const res = await api.put(`/api/users/${userId}`, data);
 
-            if (!res.ok) throw new Error("Error al actualizar perfil");
-
-            const updated = await res.json();
+            const updated = res.data;
             onSave(updated); // actualiza el estado del perfil
             onClose();
         } catch (err) {
@@ -83,12 +76,13 @@ const EditarPerfilModal: React.FC<EditarPerfilModalProps> = ({
         formData.append('image', file);
 
         try {
-            const res = await fetch('http://localhost:5000/api/upload/profile-image', {
-                method: 'POST',
-                body: formData,
+            const res = await api.post('/api/upload/profile-image', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
             });
 
-            const data = await res.json();
+            const data = res.data;
             if (data.url) {
                 setProfileImage(data.url); // Guardas la URL pública
             }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import api from '../../utils/api';
 
 interface Props {
   onSuccess: () => void;
@@ -27,16 +28,11 @@ const CreateRepositoryForm: React.FC<Props> = ({ onSuccess }) => {
     }
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch('http://localhost:5000/api/repositorios', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ name, description, type, memberEmails }),
+      const res = await api.post('/api/repositorios', {
+        name, description, type, memberEmails
       });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.message);
+      const result = res.data;
+      if (res.status !== 200 && res.status !== 201) throw new Error(result.message);
       alert('✅ Repositorio creado correctamente.');
       onSuccess();
     } catch (err: unknown) {
